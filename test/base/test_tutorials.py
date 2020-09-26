@@ -86,12 +86,18 @@ class DocTest(fixtures.TestBase):
             content = re.sub(r"{(?:stop|sql|opensql)}", "", content)
             self._run_doctest_for_content(fname, content)
 
+    def test_20_style(self):
+        self._run_doctest("tutorial.rst")
+
     def test_orm(self):
         self._run_doctest("orm/tutorial.rst")
 
     @testing.emits_warning()
     def test_core(self):
         self._run_doctest("core/tutorial.rst")
+
+    def test_queryguide(self):
+        self._run_doctest("queryguide.rst")
 
 
 # unicode checker courtesy pytest

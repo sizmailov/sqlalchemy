@@ -43,9 +43,9 @@ SQLAlchemy Documentation
     Core and ORM working styles more closely than ever.   The new tutorial introduces
     both concepts in parallel.  New users and those starting new projects should start here!
 
-    * **SQLAlchemy 2.0 (Coming Soon)** - SQLAlchemy 2.0's main tutorial
+    * :doc:`/tutorial` - SQLAlchemy 2.0's main tutorial
 
-    * **SQLAlchemy Querying Guide (Coming Soon)** - reference documentation for writing queries
+    * :doc:`/queryguide` - reference documentation for writing queries
 
     * :doc:`Migrating to SQLAlchemy 2.0 <changelog/migration_20>` - Complete background on migrating from 1.3 or 1.4 to 2.0
 

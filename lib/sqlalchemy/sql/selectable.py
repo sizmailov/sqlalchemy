@@ -700,14 +700,15 @@ class FromClause(roles.AnonymizedFromClauseRole, Selectable):
     @util.memoized_property
     def columns(self):
         """A named-based collection of :class:`_expression.ColumnElement`
-        objects
-        maintained by this :class:`_expression.FromClause`.
+        objects maintained by this :class:`_expression.FromClause`.
 
         The :attr:`.columns`, or :attr:`.c` collection, is the gateway
         to the construction of SQL expressions using table-bound or
         other selectable-bound columns::
 
             select(mytable).where(mytable.c.somecolumn == 5)
+
+        :return: a :class:`.ColumnCollection` object.
 
         """
 
@@ -734,8 +735,12 @@ class FromClause(roles.AnonymizedFromClauseRole, Selectable):
 
     @util.memoized_property
     def primary_key(self):
-        """Return the collection of :class:`_schema.Column` objects
-        which comprise the primary key of this FromClause.
+        """Return the iterable collection of :class:`_schema.Column` objects
+        which comprise the primary key of this :class:`_selectable.FromClause`.
+
+        For a :class:`_schema.Table` object, this collection is represented
+        by the :class:`_schema.PrimaryKeyConstraint` which itself is an
+        iterable collection of :class:`_schema.Column` objects.
 
         """
         self._init_collections()
@@ -771,7 +776,16 @@ class FromClause(roles.AnonymizedFromClauseRole, Selectable):
 
     c = property(
         attrgetter("columns"),
-        doc="An alias for the :attr:`.columns` attribute.",
+        doc="""
+        A named-based collection of :class:`_expression.ColumnElement`
+        objects maintained by this :class:`_expression.FromClause`.
+
+        The :attr:`_sql.FromClause.c` attribute is an alias for the
+        :attr:`_sql.FromClause.columns` atttribute.
+
+        :return: a :class:`.ColumnCollection`
+
+        """,
     )
     _select_iterable = property(attrgetter("columns"))
 
@@ -4888,7 +4902,7 @@ class Select(
     _whereclause = whereclause
 
     @_generative
-    def where(self, whereclause):
+    def where(self, *whereclause):
         """Return a new :func:`_expression.select` construct with
         the given expression added to
         its WHERE clause, joined to the existing clause via AND, if any.
@@ -4896,9 +4910,10 @@ class Select(
         """
 
         assert isinstance(self._where_criteria, tuple)
-        self._where_criteria += (
-            coercions.expect(roles.WhereHavingRole, whereclause),
-        )
+
+        for criterion in list(whereclause):
+            where_criteria = coercions.expect(roles.WhereHavingRole, criterion)
+            self._where_criteria += (where_criteria,)
 
     @_generative
     def having(self, having):

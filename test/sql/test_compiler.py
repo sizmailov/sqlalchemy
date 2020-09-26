@@ -1627,6 +1627,15 @@ class SelectTest(fixtures.TestBase, AssertsCompiledSQL):
             "SELECT mytable.myid FROM mytable",
         )
 
+    def test_where_multiple(self):
+        self.assert_compile(
+            select(table1.c.myid).where(
+                table1.c.myid == 12, table1.c.name == "foobar"
+            ),
+            "SELECT mytable.myid FROM mytable WHERE mytable.myid = :myid_1 "
+            "AND mytable.name = :name_1",
+        )
+
     def test_order_by_nulls(self):
         self.assert_compile(
             table2.select().order_by(
